@@ -322,17 +322,23 @@ class ContainerRegistry:
     #   a number behind it to make it unique.
     def uniqueName(self, original):
         name = original.strip()
-        num_check = re.compile("(.*?)\s*#\d$").match(name)
+        num_check = re.compile("(.*?)\s*#(\d)$").match(name)
         if num_check: #There is a number in the name.
             name = num_check.group(1) #Filter out the number.
+            i = int(num_check.group(2))
+            unique_name = "%s #%d" % (name, i)  # Use the number for first check
+        else:
+            i = 1
+            unique_name = name
         if name == "": #Wait, that deleted everything!
             name = "Profile"
-        unique_name = name
-
-        i = 1
+            unique_name = name
+        from UM.Logger import Logger
+        Logger.log("d", "## unique name, checking %s..." % unique_name)
         while self.findContainers(id = unique_name, ignore_case = True) or self.findContainers(name = unique_name): #A container already has this name.
             i += 1 #Try next numbering.
             unique_name = "%s #%d" % (name, i) #Fill name like this: "Extruder #2".
+            Logger.log("d", "## unique name, .... checking %s..." % unique_name)
         return unique_name
 
     ##  Add a container type that will be used to serialize/deserialize containers.

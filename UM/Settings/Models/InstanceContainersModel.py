@@ -7,6 +7,7 @@ from PyQt5.QtCore import pyqtProperty, Qt, pyqtSignal, pyqtSlot, QUrl
 from UM.PluginRegistry import PluginRegistry #For getting the possible profile writers to write with.
 from UM.Settings.ContainerRegistry import ContainerRegistry
 from UM.Settings.InstanceContainer import InstanceContainer
+from UM.Logger import Logger
 
 import os
 
@@ -167,6 +168,9 @@ class InstanceContainersModel(ListModel):
 
     def _updateMetaData(self, container):
         index = self.find("id", container.id)
+        if index < 0:
+            Logger.log("w", "Could not find container.id [%s], not updating meta data in [%s]." % (container.id, str(self)))
+            return
 
         if self._section_property:
             self.setProperty(index, "section", container.getMetaDataEntry(self._section_property, ""))

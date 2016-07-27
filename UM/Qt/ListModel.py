@@ -83,6 +83,9 @@ class ListModel(QAbstractListModel):
 
     @pyqtSlot(int, str, QVariant)
     def setProperty(self, index, property, value):
+        from UM.Logger import Logger
+        Logger.log("d", "** ListModel.setProperty %s %s %s" % (index, property, value))
+
         self._items[index][property] = value
         self.dataChanged.emit(self.index(index, 0), self.index(index, 0))
 
